@@ -3,6 +3,10 @@ using UnityEngine;
 public class playerMovement : MonoBehaviour
 {
     static float Xmovement;
+    static float Zmovement;
+
+    static float acceleration;
+    static float deceleration;
 
     static Vector3 startPos;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -14,31 +18,32 @@ public class playerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.W))
+        
+        if (Input.GetKey(KeyCode.W))
         {
             Xmovement += 1;
-            Vector3 test = new Vector3(Xmovement, 0f, 0f);
+            Vector3 test = new Vector3(Xmovement, 0f, Zmovement);
+
+            transform.position = Vector3.MoveTowards(transform.position, test,1);
+        }
+        if (Input.GetKey(KeyCode.S))
+        {
+            Xmovement -= 1;
+            Vector3 test = new Vector3(Xmovement, 0f, Zmovement);
 
             transform.position = test;
         }
-        if (Input.GetKeyDown(KeyCode.W))
+        if (Input.GetKey(KeyCode.A))
         {
-            Xmovement += 1;
-            Vector3 test = new Vector3(Xmovement, 0f, 0f);
+            Zmovement -= 1;
+            Vector3 test = new Vector3(Xmovement, 0f, Zmovement);
 
             transform.position = test;
         }
-        if (Input.GetKeyDown(KeyCode.W))
+        if (Input.GetKey(KeyCode.D))
         {
-            Xmovement += 1;
-            Vector3 test = new Vector3(Xmovement, 0f, 0f);
-
-            transform.position = test;
-        }
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            Xmovement += 1;
-            Vector3 test = new Vector3(Xmovement, 0f, 0f);
+            Zmovement += 1;
+            Vector3 test = new Vector3(Xmovement, 0f, Zmovement);
 
             transform.position = test;
         }
