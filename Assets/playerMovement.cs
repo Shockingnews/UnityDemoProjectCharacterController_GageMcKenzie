@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using UnityEngine.InputSystem;
 public class playerMovement : MonoBehaviour
 {
     static float Xmovement;
@@ -8,11 +8,15 @@ public class playerMovement : MonoBehaviour
     static float acceleration;
     static float deceleration;
 
+    private CharacterController controller;
+
     static Vector3 startPos;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         transform.position = startPos;
+        Xmovement = transform.position.x + 1;
+        Zmovement = transform.position.z + 1;
     }
 
     // Update is called once per frame
@@ -21,7 +25,7 @@ public class playerMovement : MonoBehaviour
         
         if (Input.GetKey(KeyCode.W))
         {
-            Xmovement += 1;
+            
             Vector3 test = new Vector3(Xmovement, 0f, Zmovement);
 
             transform.position = Vector3.MoveTowards(transform.position, test,1);
