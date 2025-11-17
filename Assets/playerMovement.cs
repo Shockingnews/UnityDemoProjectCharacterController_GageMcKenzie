@@ -6,6 +6,9 @@ public class playerMovement : MonoBehaviour
 
     static float acceleration;
     static float deceleration;
+    static int playerspeed = 5;
+
+    public GameObject player;
 
     private CharacterController controller;
 
@@ -15,14 +18,11 @@ public class playerMovement : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+
         //Vector3.MoveTowards();
-        
-    }
-    private void Awake()
-    {
         controller = gameObject.AddComponent<CharacterController>();
     }
+    
     private void OnEnable()
     {
         movement.action.Enable();
@@ -35,7 +35,7 @@ public class playerMovement : MonoBehaviour
     void Update()
     {
         Vector2 movementInput = movement.action.ReadValue<Vector2>();
-        Vector3 movePlayer = new Vector3(movementInput.x, 0f, movementInput.y);
+        Vector3 movePlayer = new Vector3(movementInput.x, 0, movementInput.y);
 
         movePlayer = Vector3.ClampMagnitude(movePlayer, 1f);
 
@@ -43,6 +43,8 @@ public class playerMovement : MonoBehaviour
         {
             transform.forward = movePlayer;
         }
-        controller.Move(movePlayer * Time.deltaTime);
+
+        Vector3 newmovement = (playerspeed * movePlayer);
+         controller.Move(newmovement * Time.deltaTime);
     }
 }
