@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 public class playerMovement : MonoBehaviour
@@ -8,7 +9,7 @@ public class playerMovement : MonoBehaviour
     static float deceleration;
     public float playerspeed = 5;
 
-
+    
 
     private CharacterController controller;
 
@@ -32,6 +33,7 @@ public class playerMovement : MonoBehaviour
         // gets the x and y values of the player input and puts in a 3d space
         Vector3 movePlayer = new Vector3(movementInput.x, 0, movementInput.y);
 
+        
 
         // moves where player is facing
         transform.forward = movePlayer;
