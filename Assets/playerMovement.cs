@@ -18,10 +18,12 @@ public class playerMovement : MonoBehaviour
     static Vector3 movePlayer;
     static float smoothTime = 0.1f;
     static float test = 0.1f;
+    static float sprintInput = sprint.action.ReadValue<2>();
 
     private CharacterController controller;
 
     public InputActionReference movement;
+    public InputActionReference sprint;
     public InputActionReference Jump;
     public InputActionReference Crounch;
 
@@ -49,8 +51,15 @@ public class playerMovement : MonoBehaviour
             
         // gets the input from the player and reads it out
         Vector2 movementInput = movement.action.ReadValue<Vector2>();
-        // gets the x and y values of the player input and puts in a 3d space
-        movePlayer = new Vector3(movementInput.x, 0.0f, movementInput.y)*Time.deltaTime* playerspeed;
+        
+
+        if (sprintInput == 2) 
+        {
+            movePlayer = new Vector3(movementInput.x * 3f, 0.0f, movementInput.y * 3f) * Time.deltaTime * playerspeed;
+        }
+        else { movePlayer = new Vector3(movementInput.x, 0.0f, movementInput.y) * Time.deltaTime * playerspeed; }
+            // gets the x and y values of the player input and puts in a 3d space
+            
 
         
 

@@ -414,6 +414,7 @@ MonoBehaviour:
   playerspeedMax: 10
   playerspeedMin: 5
   movement: {fileID: -1680190386980627800, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  sprint: {fileID: -7471211009204490832, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   Jump: {fileID: 0}
   Crounch: {fileID: 0}
 --- !u!143 &485969540
