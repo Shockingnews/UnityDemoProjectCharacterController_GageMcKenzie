@@ -38,26 +38,33 @@ public class playerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (controller.isGrounded)
-        {
-            gravity = -9.81f;
-        }
-        else { ymovement += gravity * Time.deltaTime; }
+        Vector3 lookingPos = new Vector3(movePlayer.x, 0.0f, movePlayer.z);
+        Quaternion currentRot = transform.rotation;
+        Quaternion targetRot = Quaternion.LookRotation(lookingPos);
+        transform.rotation = Quaternion.Slerp(currentRot, targetRot, 15f * Time.deltaTime);
+
+        bool isGrounded = controller.isGrounded;
+        
+        //else { ymovement += gravity * Time.deltaTime; }
             
         // gets the input from the player and reads it out
         Vector2 movementInput = movement.action.ReadValue<Vector2>();
         // gets the x and y values of the player input and puts in a 3d space
-        movePlayer = new Vector3(movementInput.x, 0, movementInput.y);
+        movePlayer = new Vector3(movementInput.x, 0.0f, movementInput.y)*Time.deltaTime* playerspeed;
 
         
 
         // moves where player is facing
-        transform.forward = movePlayer;
-        var targetAgnles = (movePlayer.x, movePlayer.z);
-        var angles = Mathf.SmoothDamp(transform.forward, targetAgnles, ref test, smoothTime);
-        transform.rotation = Quaternion.Euler(0.0f,angles,0.0f);
+        
+        //var targetAgnles = (movePlayer.x, movePlayer.z);
+        //var angles = Mathf.SmoothDamp(transform.forward, targetAgnles, ref test, smoothTime);
+        //transform.rotation = Quaternion.Euler(0.0f,angles,0.0f);
         // makes movement faster
-        Vector3 newmovement = (playerspeed * movePlayer);
-        controller.Move(newmovement * Time.deltaTime);
+        
+        controller.Move(movePlayer);
+    }
+    static void Rotation()
+    {
+        
     }
 }
