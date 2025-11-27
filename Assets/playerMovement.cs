@@ -11,16 +11,16 @@ public class playerMovement : MonoBehaviour
     public float playerspeedMax = 10;
     public float playerspeedMin = 5;
 
-    static float gravity = -9.81f;
+    static float gravity = -100f;
     static float ymovement;
 
     static Vector2 movementInput;
     static Vector3 movePlayer;
     static float smoothTime = 0.1f;
     static float test = 0.1f;
-    static float sprintInput = sprint.action.ReadValue<2>();
+    
 
-    private CharacterController controller;
+    static CharacterController controller;
 
     public InputActionReference movement;
     public InputActionReference sprint;
@@ -51,26 +51,52 @@ public class playerMovement : MonoBehaviour
             
         // gets the input from the player and reads it out
         Vector2 movementInput = movement.action.ReadValue<Vector2>();
-        
-
-        if (sprintInput == 2) 
+        float sprintInput = sprint.action.ReadValue<float>();
+        if (sprintInput == 1) 
         {
-            movePlayer = new Vector3(movementInput.x * 3f, 0.0f, movementInput.y * 3f) * Time.deltaTime * playerspeed;
-        }
-        else { movePlayer = new Vector3(movementInput.x, 0.0f, movementInput.y) * Time.deltaTime * playerspeed; }
-            // gets the x and y values of the player input and puts in a 3d space
-            
+            float moreSpeed = Vector3.MoveTowards(playerspeedMin, playerspeedMax, acceleration * Time.deltaTime);
+            movePlayer = new Vector3(movementInput.x *moreSpeed, gravity * Time.deltaTime, movementInput.y * moreSpeed) * Time.deltaTime * playerspeed; }
 
+        //if () 
+        //{
+        //    movePlayer = new Vector3(movementInput.x * 3f, 0.0f, movementInput.y * 3f) * Time.deltaTime * playerspeed;
+        //}
+        else { movePlayer = new Vector3(movementInput.x, gravity * Time.deltaTime, movementInput.y) * Time.deltaTime * playerspeed; }
+        float JumpInput = Jump.action.ReadValue<float>();
+        if (controller.isGrounded)
+        {
+            if (JumpInput == 1)
+            {
+                movePlayer = new Vector3(movementInput.x, 10.0f, movementInput.y) * Time.deltaTime * playerspeed;
+            }
+        }
         
+        float crounchInput = Crounch.action.ReadValue<float>();
+        if (crounchInput == 1)
+        {
+            controller.height = 0.05f;
+            
+        }
+        else
+        {
+            controller.height = 1.0f;
+            
+        }
+
+        // gets the x and y values of the player input and puts in a 3d space
+
+
+
 
         // moves where player is facing
-        
+
         //var targetAgnles = (movePlayer.x, movePlayer.z);
         //var angles = Mathf.SmoothDamp(transform.forward, targetAgnles, ref test, smoothTime);
         //transform.rotation = Quaternion.Euler(0.0f,angles,0.0f);
         // makes movement faster
-        
-        controller.Move(movePlayer);
+        //movePlayer.y = gravity * Time.deltaTime;
+
+            controller.Move(movePlayer);
     }
     static void Rotation()
     {
