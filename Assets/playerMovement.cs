@@ -4,33 +4,44 @@ using UnityEngine.InputSystem;
 public class playerMovement : MonoBehaviour
 {
 
-
-    static float acceleration;
-    static float deceleration;
+    // how much sppeed can go by before hitting max
+    public float acceleration = 5f;
+    // how much sppeed can go by before hitting min
+    public float deceleration = 5f;
+    // currnt speed
     public float playerspeed = 5;
-    public float playerspeedMax = 10;
+    // max and min of speed
+    public float playerspeedMax = 20f;
     public float playerspeedMin = 5;
 
-    static float gravity = -100f;
-    static float ymovement;
-
-    static Vector2 movementInput;
-    static Vector3 movePlayer;
-    static float smoothTime = 0.1f;
-    static float test = 0.1f;
+    static float gravity = -9.15f;
     
+    // keeps track of inputs of movement
+    static Vector2 movementInput;
+    // rotates the player
+    static float xRotation;
+    static float yRotation;
+    // moves player
+    static Vector3 move;
+    // actives gravity
+    static Vector3 volacity;
 
+    // the controller
     static CharacterController controller;
-
+    // all player inputs
     public InputActionReference movement;
     public InputActionReference sprint;
     public InputActionReference Jump;
     public InputActionReference Crounch;
-
+    public InputActionReference mouse;
+    // camera
+    public GameObject cam;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        // hides cursor
+        Cursor.visible = false;
 
         // Gets the controller adds it to the game object
         controller = gameObject.GetComponent<CharacterController>();
@@ -40,66 +51,94 @@ public class playerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 lookingPos = new Vector3(movePlayer.x, 0.0f, movePlayer.z);
-        Quaternion currentRot = transform.rotation;
-        Quaternion targetRot = Quaternion.LookRotation(lookingPos);
-        transform.rotation = Quaternion.Slerp(currentRot, targetRot, 15f * Time.deltaTime);
-
-        bool isGrounded = controller.isGrounded;
+        // reads were the mouse is positioned in game
+        Vector2 mouseInput = mouse.action.ReadValue<Vector2>();
         
-        //else { ymovement += gravity * Time.deltaTime; }
-            
-        // gets the input from the player and reads it out
-        Vector2 movementInput = movement.action.ReadValue<Vector2>();
-        float sprintInput = sprint.action.ReadValue<float>();
-        if (sprintInput == 1) 
-        {
-            float moreSpeed = Vector3.MoveTowards(playerspeedMin, playerspeedMax, acceleration * Time.deltaTime);
-            movePlayer = new Vector3(movementInput.x *moreSpeed, gravity * Time.deltaTime, movementInput.y * moreSpeed) * Time.deltaTime * playerspeed; }
+        // keeps input  of mouse
+        yRotation = mouseInput.x;
+        xRotation = -mouseInput.y;
 
-        //if () 
-        //{
-        //    movePlayer = new Vector3(movementInput.x * 3f, 0.0f, movementInput.y * 3f) * Time.deltaTime * playerspeed;
-        //}
-        else { movePlayer = new Vector3(movementInput.x, gravity * Time.deltaTime, movementInput.y) * Time.deltaTime * playerspeed; }
+        // gives you a limt on up and down movement
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+
+        // rotates cam and player in the direction of mouse
+        cam.transform.rotation = Quaternion.Euler(xRotation, yRotation, 0f);
+        transform.rotation = Quaternion.Euler(0, yRotation, 0f);
+
+         
+
+       
+        // checks for wasd inputs
+        Vector2 movementInput = movement.action.ReadValue<Vector2>();
+        
+        
+        
+        // checks for space input
         float JumpInput = Jump.action.ReadValue<float>();
+
+        // if player on the ground you can access the next part
         if (controller.isGrounded)
         {
+            // if you pressed space once move player up 
             if (JumpInput == 1)
             {
-                movePlayer = new Vector3(movementInput.x, 10.0f, movementInput.y) * Time.deltaTime * playerspeed;
+                move = transform.up * 5f + transform.right* movementInput.x + transform.forward * movementInput.y;
             }
         }
         
+        // checks for ctrl input
         float crounchInput = Crounch.action.ReadValue<float>();
+        // if ctrl held or pressed crouch
         if (crounchInput == 1)
         {
-            controller.height = 0.05f;
-            
+            controller.height = 1.5f;
+
+            // decreases the speed by deceleration every second
+            playerspeed = Mathf.MoveTowards(playerspeed, playerspeedMin, deceleration * Time.deltaTime);
+            move = transform.right * movementInput.x + transform.forward * movementInput.y;
+
         }
+        // if not crounched
         else
         {
-            controller.height = 1.0f;
+            // keeps player height
+            controller.height = 2.0f;
             
+            //checks for shift input
+            float sprintInput = sprint.action.ReadValue<float>();
+            // if held or pressed sprint
+            if (sprintInput == 1)
+            {
+                // increases the speed by acceleration every second
+                playerspeed = Mathf.MoveTowards(playerspeed, playerspeedMax, acceleration * Time.deltaTime);
+                // moves player on the x and z axis
+                move = transform.right * movementInput.x + transform.forward * movementInput.y;
+
+
+                
+
+            }
+
+            // if not held or pressed
+            else
+            {
+                // decreases the speed by deceleration every second
+                playerspeed = Mathf.MoveTowards(playerspeed, playerspeedMin, deceleration * Time.deltaTime);
+                move = transform.right * movementInput.x + transform.forward * movementInput.y;
+            }
         }
-
-        // gets the x and y values of the player input and puts in a 3d space
-
-
-
-
-        // moves where player is facing
-
-        //var targetAgnles = (movePlayer.x, movePlayer.z);
-        //var angles = Mathf.SmoothDamp(transform.forward, targetAgnles, ref test, smoothTime);
-        //transform.rotation = Quaternion.Euler(0.0f,angles,0.0f);
-        // makes movement faster
-        //movePlayer.y = gravity * Time.deltaTime;
-
-            controller.Move(movePlayer);
-    }
-    static void Rotation()
-    {
+        // gravity increses every second andds it to volacity
+        volacity.y = gravity * Time.deltaTime;
         
+
+
+
+
+        
+        // moves player in currnt direction and by currnt speed
+        controller.Move(move * Time.deltaTime * playerspeed);
+        // adds gravity
+        controller.Move(volacity);
     }
+    
 }
