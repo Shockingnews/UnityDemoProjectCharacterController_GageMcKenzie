@@ -23,6 +23,7 @@ public class playerMovement : MonoBehaviour
     static float yRotation;
     // moves player
     static Vector3 move;
+    static Vector3 moveUp;
     // actives gravity
     static Vector3 volacity;
 
@@ -73,18 +74,23 @@ public class playerMovement : MonoBehaviour
         
         
         
-        // checks for space input
-        float JumpInput = Jump.action.ReadValue<float>();
+        
 
         // if player on the ground you can access the next part
-        if (controller.isGrounded)
+        if(controller.isGrounded)
         {
+            // checks for space input
+            float JumpInput = Jump.action.ReadValue<float>();
+
             // if you pressed space once move player up 
             if (JumpInput == 1)
             {
-                move = transform.up * 5f + transform.right* movementInput.x + transform.forward * movementInput.y;
+                moveUp = transform.up * 3.5f + transform.right * movementInput.x + transform.forward * movementInput.y;
+                //moves up if space pressed
+                controller.Move(moveUp);
             }
         }
+        
         
         // checks for ctrl input
         float crounchInput = Crounch.action.ReadValue<float>();
@@ -137,6 +143,7 @@ public class playerMovement : MonoBehaviour
         
         // moves player in currnt direction and by currnt speed
         controller.Move(move * Time.deltaTime * playerspeed);
+        
         // adds gravity
         controller.Move(volacity);
     }
